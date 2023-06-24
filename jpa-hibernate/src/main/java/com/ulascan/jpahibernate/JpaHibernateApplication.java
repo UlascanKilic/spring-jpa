@@ -65,9 +65,13 @@ public class JpaHibernateApplication {
 					.lastname(faker.name().lastName())
 					.department(department)
 					.email("instructor@edu.com")
+					.courses(courseSet)
+					.degree(Degree.builder()
+							.degreeType(DegreeType.MASTER)
+							.build())
 					.build();
 
-
+			//course.setInstructor(instructor);
 
 			Student student = Student.builder()
 					.firstname(firstName)
@@ -90,10 +94,9 @@ public class JpaHibernateApplication {
 					.build());
 
 			student.setCourses(courseMapperList);
-			course.setStudents(courseMapperList);
-
+			//course.setStudents(courseMapperList);
+			course.setInstructor(instructor);
 			department.setCourses(courseSet);
-
 
 			studentRepository.save(student);
 

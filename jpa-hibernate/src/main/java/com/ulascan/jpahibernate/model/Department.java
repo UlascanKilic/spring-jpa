@@ -32,7 +32,10 @@ public class Department {
     )
     private Faculty faculty;
 
-    @OneToMany(mappedBy = "department", orphanRemoval = true)
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "department",
+            orphanRemoval = true)
     private Set<Course> courses = new LinkedHashSet<>();
 
 }

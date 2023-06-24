@@ -1,9 +1,6 @@
 package com.ulascan.jpahibernate.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +21,10 @@ import java.util.Set;
 @Table(name = "instructor")
 public class Instructor extends BaseEntity{
 
-    @OneToOne(mappedBy = "instructor", orphanRemoval = true)
-    private Course course;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "instructor",
+            orphanRemoval = true)
+    private Set<Course> courses = new LinkedHashSet<>();
 
 }

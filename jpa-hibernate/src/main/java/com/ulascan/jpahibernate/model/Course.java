@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -32,7 +30,7 @@ public class Course {
 
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(
             name = "material_id",
             referencedColumnName = "id",
@@ -53,7 +51,10 @@ public class Course {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
