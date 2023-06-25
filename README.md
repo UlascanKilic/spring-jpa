@@ -1,4 +1,7 @@
-Welcome to the spring-jpa wiki!
+# Welcome to the JPA wiki!
+This is a personal documentation and library for me. Since I often use JPA and Hibernate ORM in my projects, I wanted to make my own documentation. There is a database with 1-1, 1-n, n-1, n-n relationships in the project. You can see the tables of the database in the image below.
+
+![](https://github.com/UlascanKilic/spring-jpa/blob/main/images/db_schema.jpg)
 
 ## Table of Context
      
