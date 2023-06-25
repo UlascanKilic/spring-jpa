@@ -2,7 +2,7 @@ Welcome to the spring-jpa wiki!
 
 ## Table of Context
      
-+ [What is JPA?](https://github.com/UlascanKilic/spring-jpa/edit/main/README.md#what-is-jpa)
++ [What is JPA?](https://github.com/UlascanKilic/spring-jpa#what-is-jpa)
 + [What is Hibernate?](https://github.com/UlascanKilic/spring-jpa/edit/main/README.md#what-is-hibernate)
 + [Entity Life Cycle](https://github.com/UlascanKilic/spring-jpa/edit/main/README.md#entity-life-cycle)
   - [Persistence Context](https://github.com/UlascanKilic/spring-jpa/edit/main/README.md#persistence-context)
