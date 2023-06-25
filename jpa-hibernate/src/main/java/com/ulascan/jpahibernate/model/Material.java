@@ -18,9 +18,21 @@ public class Material {
 
     @Id
     @GeneratedValue
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Integer id;
 
+    @Column(
+            name = "name",
+            nullable = false
+    )
     private String name;
 
+    @Column(
+            name = "url",
+            nullable = false
+    )
     private String url;
 }

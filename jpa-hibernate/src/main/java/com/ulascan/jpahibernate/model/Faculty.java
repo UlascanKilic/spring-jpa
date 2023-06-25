@@ -1,9 +1,6 @@
 package com.ulascan.jpahibernate.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -17,7 +14,15 @@ public class Faculty {
 
     @Id
     @GeneratedValue
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Integer id;
 
+    @Column(
+            name = "name",
+            nullable = false
+    )
     private String name;
 }

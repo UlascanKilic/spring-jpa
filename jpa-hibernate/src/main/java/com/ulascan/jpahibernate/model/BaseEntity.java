@@ -17,12 +17,29 @@ public class BaseEntity {
 
     @Id
     @GeneratedValue
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Integer id;
 
+    @Column(
+            name = "firstname",
+            nullable = false
+    )
     private String firstname;
 
+    @Column(
+            name = "lastname",
+            nullable = false
+    )
     private String lastname;
 
+    @Column(
+            name = "email",
+            nullable = false,
+            unique = true
+    )
     private String email;
 
     @OneToOne(cascade = CascadeType.ALL)

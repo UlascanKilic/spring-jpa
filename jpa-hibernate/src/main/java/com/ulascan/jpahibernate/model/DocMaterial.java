@@ -1,5 +1,6 @@
 package com.ulascan.jpahibernate.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,6 +21,10 @@ import java.time.LocalDate;
 @Entity
 public class DocMaterial extends Material{
 
+    @Column(
+            name = "author",
+            nullable = false
+    )
     private String author;
 
     private LocalDate date;

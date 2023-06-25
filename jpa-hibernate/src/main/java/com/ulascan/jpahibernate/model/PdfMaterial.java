@@ -1,5 +1,6 @@
 package com.ulascan.jpahibernate.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -18,5 +19,9 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class PdfMaterial extends Material{
 
+    @Column(
+            name = "pagecount",
+            nullable = false
+    )
     private int pageCount;
 }

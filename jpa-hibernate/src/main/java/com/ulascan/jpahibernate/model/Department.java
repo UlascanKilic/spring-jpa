@@ -18,8 +18,16 @@ public class Department {
 
     @Id
     @GeneratedValue
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Integer id;
 
+    @Column(
+            name = "name",
+            nullable = false
+    )
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL)

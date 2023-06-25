@@ -17,6 +17,10 @@ import lombok.experimental.SuperBuilder;
 public class ImageMaterial extends Material{
 
     @Enumerated(EnumType.STRING)
+    @Column(
+            name = "type",
+            nullable = false
+    )
     private ImageType type;
 
 }

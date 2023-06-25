@@ -37,8 +37,14 @@ public class StudentCourseMapper {
     private Course course;
 
     @Column(
-            name = "grade",
-            nullable = false
+            name = "midterm",
+            nullable = true
     )
-    private int grade;
+    private int midterm;
+
+    @Column(
+            name = "finalgrade",
+            nullable = true
+    )
+    private int finalGrade;
 }

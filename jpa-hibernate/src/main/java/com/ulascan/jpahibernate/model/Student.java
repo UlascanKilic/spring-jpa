@@ -21,6 +21,10 @@ import java.util.List;
 @Table(name = "student")
 public class Student extends BaseEntity {
 
+    @Column(
+            name = "grade",
+            nullable = false
+    )
     private int grade;
 
     @OneToMany(

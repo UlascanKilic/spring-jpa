@@ -17,18 +17,36 @@ public class Course {
 
     @Id
     @GeneratedValue
-    @Column(nullable = false)
+    @Column(
+            name = "id",
+            updatable = false,
+            nullable = false)
     private Integer id;
 
+    @Column(
+            name = "name",
+            nullable = false
+    )
     private String name;
 
-    @Column(nullable = false)
+    @Column(
+            name = "code",
+            nullable = false,
+            unique = true
+    )
+    private String code;
+
+    @Column(
+            name = "hours",
+            nullable = false
+    )
     private int hours;
 
-    @Column(nullable = false)
+    @Column(
+            name = "capacity",
+            nullable = false
+    )
     private int capacity;
-
-
 
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(

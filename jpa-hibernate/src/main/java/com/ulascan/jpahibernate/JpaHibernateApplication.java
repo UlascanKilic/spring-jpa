@@ -50,6 +50,7 @@ public class JpaHibernateApplication {
 					.capacity(100)
 					.department(department)
 					.name("Database Systems 101")
+					.code("BLM4900")
 					.material(ImageMaterial.builder()
 							.url("youtube.com")
 							.name("Youtube Video")
@@ -88,19 +89,21 @@ public class JpaHibernateApplication {
 			courseMapperList.add(StudentCourseMapper
 					.builder()
 					.id(new StudentCourseId(1,1))
-					.grade(2)
+					.midterm(59)
+					.finalGrade(35)
 					.course(course)
 					.student(student)
 					.build());
 
 			student.setCourses(courseMapperList);
-			//course.setStudents(courseMapperList);
 			course.setInstructor(instructor);
 			department.setCourses(courseSet);
 
 			studentRepository.save(student);
 
 			Student student1 = studentRepository.findAll().get(0);
+
+			Course course1 = courseRepository.findAll().get(0);
 
 			System.out.printf(student1.getCourses().get(0).getCourse().getName());
 

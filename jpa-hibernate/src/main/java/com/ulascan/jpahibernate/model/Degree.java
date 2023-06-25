@@ -1,9 +1,6 @@
 package com.ulascan.jpahibernate.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -17,7 +14,16 @@ public class Degree {
 
     @Id
     @GeneratedValue
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "degreetype",
+            nullable = false
+    )
     private DegreeType degreeType;
 }
