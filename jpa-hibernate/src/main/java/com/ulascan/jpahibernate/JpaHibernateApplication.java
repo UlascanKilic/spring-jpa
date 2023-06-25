@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.ulascan.jpahibernate.model.*;
 import com.ulascan.jpahibernate.repository.CourseRepository;
 import com.ulascan.jpahibernate.repository.InstructorRepository;
+import com.ulascan.jpahibernate.repository.StudentCourseMapperRepository;
 import com.ulascan.jpahibernate.repository.StudentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +25,7 @@ public class JpaHibernateApplication {
 	CommandLineRunner commandLineRunner(
 			StudentRepository studentRepository,
 			CourseRepository courseRepository,
-			InstructorRepository instructorRepository
+			StudentCourseMapperRepository studentCourseMapperRepository
 	)
 	{
 		return args -> {
@@ -104,6 +105,8 @@ public class JpaHibernateApplication {
 			Student student1 = studentRepository.findAll().get(0);
 
 			Course course1 = courseRepository.findAll().get(0);
+
+			StudentCourseMapper mapper = studentCourseMapperRepository.findAll().get(0);
 
 			System.out.printf(student1.getCourses().get(0).getCourse().getName());
 

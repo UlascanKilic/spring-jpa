@@ -18,22 +18,10 @@ public class StudentCourseMapper {
 
     @ManyToOne
     @MapsId("studentId")
-    @JoinColumn(
-            name = "student_id",
-            foreignKey = @ForeignKey(
-                    name = "mapper_student_id_fk"
-            )
-    )
     private Student student;
 
     @ManyToOne
     @MapsId("courseId")
-    @JoinColumn(
-            name = "course_id",
-            foreignKey = @ForeignKey(
-                    name = "mapper_course_id_fk"
-            )
-    )
     private Course course;
 
     @Column(

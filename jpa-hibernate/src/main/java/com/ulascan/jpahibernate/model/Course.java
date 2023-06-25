@@ -59,8 +59,9 @@ public class Course {
     private Material material;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
+            orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.EAGER,
             mappedBy = "course"
     )
     private List<StudentCourseMapper> students = new ArrayList<>();
