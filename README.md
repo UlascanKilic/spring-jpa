@@ -21,14 +21,14 @@ This is a personal documentation and library for me. Since I often use JPA and H
     * [Removing](https://github.com/UlascanKilic/spring-jpa#removing)
     * [Deletion](https://github.com/UlascanKilic/spring-jpa#deletion)
   - [Transient State (Again)](https://github.com/UlascanKilic/spring-jpa#transient-state-again)
-+ [Recap]()
-  - [Normalization in Databases](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
-    * [1-1 Relation]()
-    * [1-n Relation]()
-    * [n-n Relation]()
-  - [Directional-Bidirectional Relation](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
-    * [Directional Relation]()
-    * [Bidirectional Relation]()
++ [Recap](https://github.com/UlascanKilic/spring-jpa#recap)
+  - [Types of Relationship](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
+    * [One-to-One (1-1) Relationship]()
+    * [One-to-Many (1-N) Relationship]()
+    * [Many-to-Many (N-N) Relationship]()
+  - [Directional-Bidirectional Relationship](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
+    * [Directional Relationship]()
+    * [Bidirectional Relationship]()
 + [Most Used Annotations]()
   - [@Entity]()
   - [@Table]()
@@ -113,6 +113,165 @@ After being removed, the entity returns to the transient state. It can be consid
 
 
 ***
+
+## Recap ##
+
+### Types of Relationship ###
+
+
+In a one-to-one relationship, one record in the first table (let's call it Table A) is related to only one record in the second table (Table B), and vice versa. This means that for each row in Table A, there is exactly one corresponding row in Table B, and vice versa. This relationship is relatively rare, as it is typically more efficient to combine the two tables into a single table.
+Example: Consider two tables, "Employee" and "EmployeeAddress." Each employee can have only one address, and each address belongs to only one employee. Here, the relationship between "Employee" and "EmployeeAddress" is a one-to-one relationship.
+
+***
+
+```
+Employee Table:
+EmployeeID | Name    | Department
+-------------------------------
+1          | John    | HR
+2          | Jane    | Finance
+3          | Alex    | IT
+
+EmployeeAddress Table:
+EmployeeID | Address
+---------------------
+1          | 123 Main St
+2          | 456 Oak Ave
+3          | 789 Elm Rd
+
+```
+
+#### One-to-Many (1-N) Relationship ####
+
+In a one-to-many relationship, one record in the first table (Table A) is associated with one or more records in the second table (Table B). However, each record in Table B can be related to only one record in Table A. This is the most common type of relationship found in databases.
+Example: Consider two tables, "Department" and "Employee." Each department can have many employees, but each employee can belong to only one department. Here, the relationship between "Department" and "Employee" is a one-to-many relationship.
+
+***
+
+```
+Department Table:
+DepartmentID | Name
+-------------------
+1            | HR
+2            | Finance
+3            | IT
+
+Employee Table:
+EmployeeID | Name    | DepartmentID
+-----------------------------------
+1          | John    | 1
+2          | Jane    | 2
+3          | Alex    | 3
+4          | Sarah   | 2
+5          | Mike    | 3
+
+```
+
+#### Many-to-Many (N-N) Relationship ####
+In a many-to-many relationship, one or more records in the first table (Table A) can be associated with one or more records in the second table (Table B), and vice versa. To represent this relationship in a relational database, a junction table (also known as an associative table or linking table) is used. The junction table connects the primary keys of both tables through foreign keys.
+Example: Consider two tables, "Student" and "Course." Each student can enroll in multiple courses, and each course can have multiple students. To represent this relationship, a junction table "Enrollment" is used.
+
+***
+
+```
+Student Table:
+StudentID | Name
+----------------
+1         | John
+2         | Jane
+3         | Alex
+
+Course Table:
+CourseID | Name
+---------------
+101      | Math
+102      | Science
+103      | History
+
+Enrollment Table:
+StudentID | CourseID
+--------------------
+1         | 101
+1         | 102
+2         | 102
+3         | 103
+
+```
+
+### Directional-Bidirectional Relationship ###
+In the context of relationships in database management systems, "directional" and "bidirectional" refer to the way data can be accessed and traversed between related tables. Let's take a closer look at each:
+
+#### Directional Relationship ####
+In a directional relationship, data can be accessed and traversed in only one direction between the related tables. This means that one table acts as the parent or master table, and the other table acts as the child or detail table. **The relationship is established using foreign keys in the child table**, which reference the primary key in the parent table.
+In this type of relationship, you can easily access data from the child table by referencing the foreign key, but you cannot directly access data from the parent table using the child table's foreign key.
+
+Example: Consider two tables, "Author" and "Book." Each book can have only one author, but each author can have multiple books. The relationship between "Author" and "Book" is a directional relationship because you can easily find the books written by a specific author by using the author's primary key as a foreign key in the "Book" table. However, you cannot directly find the author of a specific book using the "Author" table.
+
+***
+```
+Author Table:
+AuthorID | Name        | Country
+-------------------------------
+1        | John Smith  | USA
+2        | Jane Doe    | UK
+3        | Alex Johnson| Canada
+
+Book Table:
+BookID | Title               | AuthorID (Foreign Key to Author Table)
+------------------------------------------------------------
+101    | The Book of Life   | 1
+102    | Beyond the Stars   | 2
+103    | Coding Adventures  | 1
+104    | Mystery of the Forest | 3
+105    | Journey to Mars    | 1
+
+```
+#### Bidirectional Relationship ####
+In a bidirectional relationship, data can be accessed and traversed in both directions between the related tables. This means that each table can act as both the parent and the child table simultaneously. The relationship is established using foreign keys in both tables, allowing you to navigate data between the tables in either direction.
+In this type of relationship, you can easily access data from both tables using their respective foreign keys.
+
+Example: Consider two tables, "Student" and "Course." Each student can enroll in multiple courses, and each course can have multiple students. The relationship between "Student" and "Course" is a bidirectional relationship because you can find the courses a specific student is enrolled in using the "Student" table or find the students enrolled in a specific course using the "Course" table.
+
+***
+
+```
+Student Table:
+StudentID | Name
+----------------
+1         | John
+2         | Jane
+3         | Alex
+
+Course Table:
+CourseID | Name
+---------------
+101      | Math
+102      | Science
+103      | History
+
+Enrollment Table:
+StudentID | CourseID
+--------------------
+1         | 101
+1         | 102
+2         | 102
+3         | 103
+
+```
+
+In this bidirectional relationship:
+
+1. The "Student" table contains information about the students.
+2. The "Course" table contains information about the courses.
+3. The "Enrollment" table acts as a junction table, representing the many-to-many relationship between students and courses. Each row in the "Enrollment" table connects a student to a course through their respective IDs.
+
+Now, using this bidirectional relationship:
+
+* You can easily find the courses a specific student is enrolled in by referencing the "StudentID" in the "Enrollment" table.
+* You can also find the students enrolled in a specific course by referencing the "CourseID" in the "Enrollment" table.
+
+For example, if you want to find the courses John is enrolled in, you can look for rows in the "Enrollment" table where the "StudentID" is 1. Similarly, if you want to find all students enrolled in the Math course, you can look for rows in the "Enrollment" table where the "CourseID" is 101.
+
 <details>
 <summary>Registering a User</summary>
 
