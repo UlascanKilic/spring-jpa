@@ -22,13 +22,13 @@ This is a personal documentation and library for me. Since I often use JPA and H
     * [Deletion](https://github.com/UlascanKilic/spring-jpa#deletion)
   - [Transient State (Again)](https://github.com/UlascanKilic/spring-jpa#transient-state-again)
 + [Recap](https://github.com/UlascanKilic/spring-jpa#recap)
-  - [Types of Relationship](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
-    * [One-to-One (1-1) Relationship]()
-    * [One-to-Many (1-N) Relationship]()
-    * [Many-to-Many (N-N) Relationship]()
-  - [Directional-Bidirectional Relationship](https://github.com/UlascanKilic/spring-jpa/wiki/What-is-JPA%3F)
-    * [Directional Relationship]()
-    * [Bidirectional Relationship]()
+  - [Types of Relationship](https://github.com/UlascanKilic/spring-jpa#types-of-relationship)
+    * [One-to-One (1-1) Relationship](https://github.com/UlascanKilic/spring-jpa#many-to-one-1-1-relationship)
+    * [One-to-Many (1-N) Relationship](https://github.com/UlascanKilic/spring-jpa#one-to-many-1-n-relationship)
+    * [Many-to-Many (N-N) Relationship](https://github.com/UlascanKilic/spring-jpa#many-to-many-n-n-relationship)
+  - [Directional-Bidirectional Relationship](https://github.com/UlascanKilic/spring-jpa#directional-bidirectional-relationship)
+    * [Directional Relationship](https://github.com/UlascanKilic/spring-jpa#directional-relationship)
+    * [Bidirectional Relationship](https://github.com/UlascanKilic/spring-jpa#bidirectional-relationship)
 + [Most Used Annotations]()
   - [@Entity]()
   - [@Table]()
@@ -118,6 +118,7 @@ After being removed, the entity returns to the transient state. It can be consid
 
 ### Types of Relationship ###
 
+#### One-to-One (1-1) Relationship ####
 
 In a one-to-one relationship, one record in the first table (let's call it Table A) is related to only one record in the second table (Table B), and vice versa. This means that for each row in Table A, there is exactly one corresponding row in Table B, and vice versa. This relationship is relatively rare, as it is typically more efficient to combine the two tables into a single table.
 Example: Consider two tables, "Employee" and "EmployeeAddress." Each employee can have only one address, and each address belongs to only one employee. Here, the relationship between "Employee" and "EmployeeAddress" is a one-to-one relationship.
