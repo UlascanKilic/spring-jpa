@@ -273,6 +273,131 @@ Now, using this bidirectional relationship:
 
 For example, if you want to find the courses John is enrolled in, you can look for rows in the "Enrollment" table where the "StudentID" is 1. Similarly, if you want to find all students enrolled in the Math course, you can look for rows in the "Enrollment" table where the "CourseID" is 101.
 
+***
+
+## Most Used Annotations ##
+
+### @Entity ###
+
+The @Entity annotation is used to mark a Java class as a persistent entity, which means that instances of this class will be mapped to database records. It is a crucial annotation used in ORM (Object-Relational Mapping) frameworks to map Java objects to database tables.
+
+Here's a simple code example to illustrate the use of @Entity:
+
+```
+@Entity
+public class Student {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String name;
+    
+    private int age;
+}
+```
+
+@Entity annotation indicates that the Student class is a persistent entity, and its instances will be mapped to database records. The entity name defaults to the unqualified class name (Student in this case) but can be explicitly specified with name attribute.
+
+***
+
+### @Table ###
+
+@Table annotation is used in conjunction with the @Entity annotation to specify the details of the database table that will be used to store instances of the entity class. The @Table annotation allows you to customize various attributes related to the database table.
+
+#### Attributes ####
+
+##### name (Optional) #####
+
+**name :** specifies the name of the table in the database associated with the entity. If not specified, the default table name is derived from the unqualified class name of the entity. Example: @Table(name = "students").
+
+***
+
+##### schema (Optional) #####
+
+**schema :** specifies the name of the database schema where the table should be created. This is useful when working with multi-schema databases. Example: @Table(name = "students", schema = "university").
+
+***
+
+##### catalog (Optional) #####
+
+**catalog :** specifies the name of the database catalog where the table should be created. This is used in databases that support catalogs. Example: @Table(name = "students", catalog = "university_catalog").
+
+***
+
+##### uniqueConstraints (Optional) #####
+
+**uniqueConstraints :** defines unique constraints on the table. It is an array of @UniqueConstraint annotations, each specifying a set of columns that should have unique values. Example:
+
+***
+
+```
+@Table(name = "students", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"name", "email"}),
+    @UniqueConstraint(columnNames = {"student_id"})
+})
+
+```
+
+In this example, we have specified two unique constraints. The first constraint ensures that the combination of "name" and "email" columns is unique, and the second constraint ensures that the "student_id" column has unique values.
+
+***
+
+##### indexes (Optional) #####
+
+**indexes:** defines indexes on the table. It is an array of @Index annotations, each specifying the columns to be indexed and other attributes related to indexing. Example:
+
+```
+@Table(name = "students", indexes = {
+    @Index(columnList = "name"),
+    @Index(name = "idx_age", columnList = "age")
+})
+```
+In this example, we have specified two indexes. The first index indexes the "name" column, and the second index indexes the "age" column and names the index as "idx_age".
+
+***
+
+Using the @Table annotation with its attributes allows you to have fine-grained control over the name and structure of the database table associated with your entity class, which can be helpful in various database and schema design scenarios.
+
+```
+@Entity
+@Table(
+    name = "tbl_students", // Custom table name
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"student_id", "email"}), // Composite unique constraint
+        @UniqueConstraint(columnNames = {"student_code"}) // Unique constraint for the student_code column
+    },
+    indexes = {
+        @Index(columnList = "name"), // Index on the name column
+        @Index(name = "idx_age", columnList = "age") // Named index on the age column
+    }
+)
+public class Student {
+
+    @Id
+    @Column(name = "student_id")
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, length = 50, unique = true, name = "student_code")
+    private String studentCode;
+
+    @Column(nullable = false, length = 100, unique = true)
+    private String email;
+
+    private int age;
+}
+
+```
+
+In this example, we have used the @Table annotation with its name, uniqueConstraints, and indexes attributes:
+
+1. **name = "tbl_students":** Specifies the custom table name as "tbl_students".
+2. **uniqueConstraints:** Defines two unique constraints on the table. One constraint is a composite unique constraint on the combination of "student_id" and "email" columns, and the other is a unique constraint on the "student_code" column.
+3. **indexes:** Defines two indexes on the table. One index is on the "name" column, and the other is a named index "idx_age" on the "age" column.
+
 <details>
 <summary>Registering a User</summary>
 
