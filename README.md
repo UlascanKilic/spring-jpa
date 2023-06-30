@@ -23,7 +23,7 @@ This is a personal documentation and library for me. Since I often use JPA and H
   - [Transient State (Again)](https://github.com/UlascanKilic/spring-jpa#transient-state-again)
 + [Recap](https://github.com/UlascanKilic/spring-jpa#recap)
   - [Types of Relationship](https://github.com/UlascanKilic/spring-jpa#types-of-relationship)
-    * [One-to-One (1-1) Relationship](https://github.com/UlascanKilic/spring-jpa#many-to-one-1-1-relationship)
+    * [One-to-One (1-1) Relationship](https://github.com/UlascanKilic/spring-jpa#one-to-one-1-1-relationship)
     * [One-to-Many (1-N) Relationship](https://github.com/UlascanKilic/spring-jpa#one-to-many-1-n-relationship)
     * [Many-to-Many (N-N) Relationship](https://github.com/UlascanKilic/spring-jpa#many-to-many-n-n-relationship)
   - [Directional-Bidirectional Relationship](https://github.com/UlascanKilic/spring-jpa#directional-bidirectional-relationship)
