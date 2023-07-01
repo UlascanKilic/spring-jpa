@@ -453,21 +453,113 @@ public class Employee {
 }
 ```
 
-<details>
-<summary>Registering a User</summary>
+In this example, we have an Employee entity with two primary keys: id and customId. For id, we use GenerationType.IDENTITY, which will rely on the database's auto-incrementing column to generate the values. For customId, we use GenerationType.SEQUENCE with a custom sequence generator named "emp_seq". The sequence generator is specified using the @SequenceGenerator annotation, which provides the name of the database sequence (employee_sequence) to be used and the allocation size (in this case, 1).
+
+Note: The use of multiple @Id annotations in a single entity class represents a composite primary key, which is beyond the scope of this example. It is more common to have a single @Id annotation representing the primary key.
+
+***
+
+### @Column ###
+
+@Column annotation in JPA is used to specify the mapping of a field or property to a column in the database table. It allows you to customize various attributes of the database column, such as name, length, nullable, uniqueness, etc.
+
+1. **name:** Specifies the name of the database column to which the field or property is mapped. If not provided, the default is the name of the Java field or property.
+2. **length:** Specifies the length of the column for string-based fields. For example, @Column(length = 100) will create a column with a maximum length of 100 characters.
+3. **nullable:** Defines whether the column can hold null values or not. By default, it is set to true, meaning the column can be nullable. To make the column not nullable, set it to false like @Column(nullable = false).
+4. **unique:** Specifies whether the column should enforce uniqueness. Setting unique = true means the column values must be unique across all rows.
+5. **insertable:** Determines whether the column should be included in SQL INSERT statements when persisting an entity. By default, it is set to true.
+6. **updatable:** Determines whether the column should be included in SQL UPDATE statements when updating an entity. By default, it is set to true.
+
+Here's an example of using the @Column annotation with some properties:
 
 ```
-curl --location --request POST 'localhost:9004/api/auth/register' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "email": "amangarg1995sep@gmail.com",
-    "password": "amangarg",
-    "registerAsAdmin": true
-}'
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @Id
+    @Column(name = "employee_id")
+    private Long id;
+
+    @Column(name = "first_name", length = 50, nullable = false)
+    private String firstName;
+
+    @Column(name = "last_name", length = 50, nullable = false)
+    private String lastName;
+
+    @Column(name = "email", unique = true)
+    private String email;
+}
+```
+In this example, we have an Employee entity with four fields: id, firstName, lastName, and email. The @Column annotation is used to customize the mapping of each field to the corresponding database column:
+
+* For the id field, we use @Column(name = "employee_id") to map it to the employee_id column in the database.
+* For firstName and lastName, we use @Column(length = 50, nullable = false) to set the maximum length of the columns to 50 characters and ensure they are not nullable.
+* For email, we use @Column(unique = true) to enforce uniqueness on the email column, meaning that each email address must be unique across all rows in the table.
+  
+> ⚠️ Keep in mind that the @Column annotation is not mandatory in all cases. If you do not use it, JPA will use default mappings for the fields. However, it provides a way to customize the column mappings to suit your specific database requirements.
+
+***
+     
+### @Enumerated ###
+
+@Enumerated annotation in JPA is used to specify the mapping of an enum type field to the database. It is applied to a field of an enum type to define how the enum's values are stored and retrieved in the database table.
+
+Here are the attributes of the @Enumerated annotation:
+
+1. **value (default):** Specifies the strategy to use for persisting the enum value in the database. The value attribute can take one of two values:
+      * EnumType.ORDINAL: This is the default value. It stores the enum as an integer value representing the index of the enum constant in the enum declaration. (0-based index)
+      * EnumType.STRING: It stores the enum as a string representing the name of the enum constant.
+        
+Here's an example of using the @Enumerated annotation:
+
+```
+public enum Gender {
+    MALE,
+    FEMALE
+}
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @Id
+    private Long id;
+
+    private String name;
+
+    @Enumerated
+    private Gender gender; // Defaults to EnumType.ORDINAL
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "employee_status")
+    private EmployeeStatus status;
+
+}
+
 ```
 
-> ⚠️ If you re-register an email twice, you'll get the "email in use" error
+In this example, we have an Employee entity with two enum fields: gender and status. The gender field uses the default @Enumerated annotation without specifying any attributes, so it will be persisted as an ordinal value (integer). The status field, on the other hand, uses the @Enumerated(EnumType.STRING) annotation, specifying that it should be persisted as a string (the name of the enum constant).
 
-</details>
+For instance, if you create an Employee object with the following values:
 
+```
+Employee employee = new Employee();
+employee.setId(1L);
+employee.setName("John Doe");
+employee.setGender(Gender.MALE);
+employee.setStatus(EmployeeStatus.ACTIVE);
 
+```
+
+In the database, it would be stored like this:
+
+```
+| id | name      | gender | employee_status |
+|----|-----------|--------|-----------------|
+| 1  | John Doe  | 0      | ACTIVE          |
+```
+
+Gender.MALE is stored as an ordinal value 0, whereas EmployeeStatus.ACTIVE is stored as a string "ACTIVE" in the employee_status column due to the @Enumerated(EnumType.STRING) annotation.
+
+***
