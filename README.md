@@ -41,11 +41,12 @@ This is a personal documentation and library for me. Since I often use JPA and H
   - [@MappedSuperclass](https://github.com/UlascanKilic/spring-jpa#mappedsuperclass)
   - [@Embeddable](https://github.com/UlascanKilic/spring-jpa#embeddable)
   - [@EmbeddedId](https://github.com/UlascanKilic/spring-jpa#embeddedid)
- + [OneToOne Relation]()
- + [OneToMany Relation]()
- + [ManyToMany Relation With Join Table]()
- + [ManyToMany Relation With Composite Key]()
- + [Inheritance With Entities]()
+ + [Relationships]()
+    - [OneToOne Relation]()
+    - [OneToMany Relation]()
+    - [ManyToMany Relation With Join Table]()
+    - [ManyToMany Relation With Composite Key]()
+    - [Inheritance With Entities]()
 
 ***
 
