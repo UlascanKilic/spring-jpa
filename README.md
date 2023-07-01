@@ -38,7 +38,6 @@ This is a personal documentation and library for me. Since I often use JPA and H
   - [@Enumerated](https://github.com/UlascanKilic/spring-jpa#enumerated)
   - [@JoinColumn](https://github.com/UlascanKilic/spring-jpa#joincolumn)
   - [@Inheritance](https://github.com/UlascanKilic/spring-jpa#inheritance)
-  - [@SuperBuilder](https://github.com/UlascanKilic/spring-jpa#superbuilder)
   - [@MappedSuperclass](https://github.com/UlascanKilic/spring-jpa#mappedsuperclass)
   - [@Embeddable](https://github.com/UlascanKilic/spring-jpa#embeddable)
   - [@EmbeddedId](https://github.com/UlascanKilic/spring-jpa#embeddedid)
@@ -280,11 +279,6 @@ The `@Entity` annotation in Jakarta Persistence (formerly known as Java Persiste
 Here's a simple code example to illustrate the use of `@Entity`:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-
 @Entity
 public class Student {
 
@@ -318,14 +312,6 @@ Other properties of the `@Entity` annotation include:
 Here's an example that includes more properties of the `@Entity` annotation:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.UniqueConstraint;
-
 @Entity
 @Table(name = "students", schema = "university", uniqueConstraints = {
     @UniqueConstraint(columnNames = "name")
@@ -421,12 +407,6 @@ In this example, we have specified two indexes. The first index indexes the "nam
 Here's how the `@Id` annotation is used:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -470,13 +450,6 @@ The `@GeneratedValue` annotation has several attributes to define different stra
 Here's an example of using `@GeneratedValue` with different strategies:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -523,11 +496,6 @@ Here are some of the common properties of the `@Column` annotation:
 Here's an example of using the `@Column` annotation with some properties:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -572,12 +540,6 @@ Here are the attributes of the `@Enumerated` annotation:
 Here's an example of using the `@Enumerated` annotation:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
-
 public enum Gender {
     MALE,
     FEMALE
@@ -648,12 +610,6 @@ Here are some of the common attributes of the `@JoinColumn` annotation:
 Here's an example of using the `@JoinColumn` annotation:
 
 ```java
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -691,8 +647,6 @@ Here are the attributes of the `@Inheritance` annotation:
 Here's an example of using the `@Inheritance` annotation:
 
 ```java
-import jakarta.persistence.*;
-
 @Entity
 @Table(name = "vehicles")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -735,6 +689,171 @@ The `@DiscriminatorValue` annotation is used on each subclass to specify the dis
 
 Depending on your application requirements, you can choose a different inheritance strategy based on the complexity and performance considerations of your data model.
 
+***
 
+### @MappedSuperclass ###
+
+The `@MappedSuperclass` annotation in JPA is used to designate a class as a superclass whose properties should be mapped to the database tables of its subclasses. It is a way to define common attributes and behaviors that are shared among multiple entity classes without creating a separate table for the superclass.
+
+Here are the attributes of the `@MappedSuperclass` annotation:
+
+1. None: The `@MappedSuperclass` annotation does not have any attributes of its own.
+
+Let's see an example of how to use the `@MappedSuperclass` annotation:
+
+```java
+@MappedSuperclass
+public class BaseEntity {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Constructors, getters, setters, etc.
+}
+```
+
+In this example, we have a `BaseEntity` class with common attributes `id`, `createdAt`, and `updatedAt`. The class is annotated with `@MappedSuperclass`, which means that the properties of this class will be inherited by its subclasses, but it will not be mapped to its own database table.
+
+Now, let's create a subclass that extends `BaseEntity`:
+
+```java
+@Entity
+@Table(name = "products")
+public class Product extends BaseEntity {
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "price")
+    private BigDecimal price;
+
+    // Constructors, getters, setters, etc.
+}
+```
+
+In this example, the `Product` class extends `BaseEntity`, and it inherits the `id`, `createdAt`, and `updatedAt` attributes from the superclass. However, since `BaseEntity` is marked as `@MappedSuperclass`, it will not be mapped to a separate table. Instead, the attributes will be mapped to the `products` table along with the `name` and `price` attributes specific to the `Product` entity.
+
+By using `@MappedSuperclass`, you can avoid code duplication and enforce common fields and behaviors across multiple entity classes in your JPA data model.
+
+***
+
+### @Embeddable ###
+
+The `@Embeddable` annotation in JPA is used to define a class whose instances will be embedded as components into the owning entity's table. It allows you to group multiple fields into a single value type, which is then embedded directly into the entity's table, rather than creating a separate table for the value type.
+
+Here are the attributes of the `@Embeddable` annotation:
+
+1. None: The `@Embeddable` annotation does not have any attributes of its own.
+
+Let's see an example of how to use the `@Embeddable` annotation:
+
+```java
+@Embeddable
+public class Address {
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "postal_code")
+    private String postalCode;
+
+    // Constructors, getters, setters, etc.
+}
+```
+
+In this example, we have an `Address` class annotated with `@Embeddable`. This class represents a value type that holds address-related information, such as `street`, `city`, and `postalCode`.
+
+Now, let's use the `Address` class in an entity:
+
+```java
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Embedded
+    private Address address;
+
+    // Constructors, getters, setters, etc.
+}
+```
+
+In this example, the `Employee` class has a property of type `Address`, which is annotated with `@Embedded`. This indicates that the `Address` class should be treated as an embedded component within the `employees` table. The `street`, `city`, and `postalCode` attributes of the `Address` class will be stored as columns in the `employees` table.
+
+When an `Employee` entity is persisted or retrieved, the attributes of the embedded `Address` object will be mapped to the corresponding columns in the `employees` table, providing a way to organize related fields without the need for an additional table.
+
+Using `@Embeddable` allows you to create reusable value types that can be embedded in multiple entities, simplifying your data model and avoiding the need for unnecessary joins in queries.
+
+***
+
+### @EmbeddedId ###
+
+The `@EmbeddedId` annotation in JPA is used to specify that a composite key, represented by an embeddable class, is used as the primary key for an entity. It allows you to create an entity with a composite primary key, where the primary key is composed of multiple attributes.
+
+Here are the attributes of the `@EmbeddedId` annotation:
+
+1. None: The `@EmbeddedId` annotation does not have any attributes of its own.
+
+Let's see an example of how to use the `@EmbeddedId` annotation:
+
+```java
+@Embeddable
+public class EmployeeId {
+
+    @Column(name = "employee_id")
+    private String employeeId;
+
+    @Column(name = "department")
+    private String department;
+
+    // Constructors, getters, setters, equals, and hashCode methods (if needed)
+}
+```
+
+In this example, we have an `EmployeeId` class annotated with `@Embeddable`. This class represents the composite key for the `Employee` entity, consisting of `employeeId` and `department`.
+
+Now, let's use the `EmployeeId` class as the composite primary key for the `Employee` entity:
+
+```java
+@Entity
+@Table(name = "employees")
+public class Employee {
+
+    @EmbeddedId
+    private EmployeeId employeeId;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "salary")
+    private BigDecimal salary;
+
+    // Constructors, getters, setters, etc.
+}
+```
+
+In this example, the `Employee` class uses `EmployeeId` as its primary key by annotating the `employeeId` field with `@EmbeddedId`. This indicates that the `EmployeeId` class represents a composite key and its attributes (`employeeId` and `department`) should be used together as the primary key for the `employees` table.
+
+With the `@EmbeddedId` annotation, JPA will automatically handle the mapping of the composite primary key to the corresponding columns in the database table. When an `Employee` entity is persisted or retrieved, JPA will use the `EmployeeId` object to construct and interpret the primary key for the database operations.
+
+Using a composite key with `@EmbeddedId` is useful when your entity's uniqueness depends on multiple attributes, and you want to express that uniqueness as a single primary key. It can be particularly handy for mapping legacy databases or dealing with complex domain models that require composite keys.
 
 ***
