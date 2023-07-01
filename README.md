@@ -275,11 +275,16 @@ For example, if you want to find the courses John is enrolled in, you can look f
 
 ### @Entity ###
 
-The @Entity annotation is used to mark a Java class as a persistent entity, which means that instances of this class will be mapped to database records. It is a crucial annotation used in ORM (Object-Relational Mapping) frameworks to map Java objects to database tables.
+The `@Entity` annotation in Jakarta Persistence (formerly known as Java Persistence API or JPA) is used to mark a Java class as a persistent entity, which means that instances of this class will be mapped to database records. It is a crucial annotation used in ORM (Object-Relational Mapping) frameworks to map Java objects to database tables.
 
-Here's a simple code example to illustrate the use of @Entity:
+Here's a simple code example to illustrate the use of `@Entity`:
 
-```
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
 @Entity
 public class Student {
 
@@ -290,120 +295,138 @@ public class Student {
     private String name;
     
     private int age;
+
+    // Constructors, getters, setters, and other methods...
 }
 ```
 
-@Entity annotation indicates that the Student class is a persistent entity, and its instances will be mapped to database records. The entity name defaults to the unqualified class name (Student in this case) but can be explicitly specified with name attribute.
+In this example, we have a `Student` class marked with the `@Entity` annotation. Let's go through the properties of this annotation:
 
-***
+1. `@Entity`: This annotation indicates that the `Student` class is a persistent entity, and its instances will be mapped to database records. The entity name defaults to the unqualified class name (`Student` in this case) but can be explicitly specified with `name` attribute.
 
-### @Table ###
+2. `@Id`: This annotation is used to specify the primary key attribute of the entity. In this example, we have marked the `id` field as the primary key for the `Student` entity. The primary key uniquely identifies each record in the database table.
 
-@Table annotation is used in conjunction with the @Entity annotation to specify the details of the database table that will be used to store instances of the entity class. The @Table annotation allows you to customize various attributes related to the database table.
+3. `@GeneratedValue`: This annotation is used to specify the strategy for generating the primary key values. In this example, we have used `GenerationType.IDENTITY`, which means that the database will automatically generate unique primary key values (usually through auto-incrementing).
 
-#### Attributes ####
+Other properties of the `@Entity` annotation include:
 
-##### name (Optional) #####
+- `name`: Specifies the name of the entity in the database. By default, it is the simple name of the entity class.
+- `schema`: Specifies the schema name of the table associated with the entity.
+- `catalog`: Specifies the catalog name of the table associated with the entity.
+- `uniqueConstraints`: Specifies unique constraints on the table.
 
-**name :** specifies the name of the table in the database associated with the entity. If not specified, the default table name is derived from the unqualified class name of the entity. Example: @Table(name = "students").
+Here's an example that includes more properties of the `@Entity` annotation:
 
-***
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.UniqueConstraint;
 
-##### schema (Optional) #####
-
-**schema :** specifies the name of the database schema where the table should be created. This is useful when working with multi-schema databases. Example: @Table(name = "students", schema = "university").
-
-***
-
-##### catalog (Optional) #####
-
-**catalog :** specifies the name of the database catalog where the table should be created. This is used in databases that support catalogs. Example: @Table(name = "students", catalog = "university_catalog").
-
-***
-
-##### uniqueConstraints (Optional) #####
-
-**uniqueConstraints :** defines unique constraints on the table. It is an array of @UniqueConstraint annotations, each specifying a set of columns that should have unique values. Example:
-
-***
-
-```
-@Table(name = "students", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"name", "email"}),
-    @UniqueConstraint(columnNames = {"student_id"})
-})
-
-```
-
-In this example, we have specified two unique constraints. The first constraint ensures that the combination of "name" and "email" columns is unique, and the second constraint ensures that the "student_id" column has unique values.
-
-***
-
-##### indexes (Optional) #####
-
-**indexes:** defines indexes on the table. It is an array of @Index annotations, each specifying the columns to be indexed and other attributes related to indexing. Example:
-
-```
-@Table(name = "students", indexes = {
-    @Index(columnList = "name"),
-    @Index(name = "idx_age", columnList = "age")
-})
-```
-In this example, we have specified two indexes. The first index indexes the "name" column, and the second index indexes the "age" column and names the index as "idx_age".
-
-***
-
-Using the @Table annotation with its attributes allows you to have fine-grained control over the name and structure of the database table associated with your entity class, which can be helpful in various database and schema design scenarios.
-
-```
 @Entity
-@Table(
-    name = "tbl_students", // Custom table name
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"student_id", "email"}), // Composite unique constraint
-        @UniqueConstraint(columnNames = {"student_code"}) // Unique constraint for the student_code column
-    },
-    indexes = {
-        @Index(columnList = "name"), // Index on the name column
-        @Index(name = "idx_age", columnList = "age") // Named index on the age column
-    }
-)
+@Table(name = "students", schema = "university", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "name")
+})
 public class Student {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
     private Long id;
 
     @Column(nullable = false, length = 100)
     private String name;
-
-    @Column(nullable = false, length = 50, unique = true, name = "student_code")
-    private String studentCode;
-
-    @Column(nullable = false, length = 100, unique = true)
-    private String email;
-
+    
+    @Column(name = "student_age")
     private int age;
-}
 
+    // Constructors, getters, setters, and other methods...
+}
 ```
 
-In this example, we have used the @Table annotation with its name, uniqueConstraints, and indexes attributes:
+In this extended example:
 
-1. **name = "tbl_students":** Specifies the custom table name as "tbl_students".
-2. **uniqueConstraints:** Defines two unique constraints on the table. One constraint is a composite unique constraint on the combination of "student_id" and "email" columns, and the other is a unique constraint on the "student_code" column.
-3. **indexes:** Defines two indexes on the table. One index is on the "name" column, and the other is a named index "idx_age" on the "age" column.
+- `@Table`: This annotation allows you to specify the table name and other table-related properties for the entity. Here, we have explicitly set the table name to "students" and the schema to "university." We have also added a unique constraint on the "name" column to ensure that each student's name is unique.
+
+- `@Column`: This annotation is used to specify column-related properties for the entity attributes. In this case, we have used it to set the column name for the `id` attribute to "student_id" and the column name for the `age` attribute to "student_age." We have also set the `name` attribute to be non-nullable and have a maximum length of 100 characters.
+
+These properties allow you to fine-tune the mapping of your Java entity to the underlying database table. Note that the specific attribute names and properties can vary based on the persistence framework you are using (e.g., Jakarta Persistence, Hibernate, etc.), but the basic concept remains the same.
+***
+
+### @Table ###
+
+In Jakarta Persistence (JPA), the `@Table` annotation is used in conjunction with the `@Entity` annotation to specify the details of the database table that will be used to store instances of the entity class. The `@Table` annotation allows you to customize various attributes related to the database table.
+
+Here's an explanation of the attributes of the `@Table` annotation:
+
+1. `name`: (Optional) Specifies the name of the table in the database associated with the entity. If not specified, the default table name is derived from the unqualified class name of the entity. Example: `@Table(name = "students")`.
+
+2. `schema`: (Optional) Specifies the name of the database schema where the table should be created. This is useful when working with multi-schema databases. Example: `@Table(name = "students", schema = "university")`.
+
+3. `catalog`: (Optional) Specifies the name of the database catalog where the table should be created. This is used in databases that support catalogs. Example: `@Table(name = "students", catalog = "university_catalog")`.
+
+4. `uniqueConstraints`: (Optional) Defines unique constraints on the table. It is an array of `@UniqueConstraint` annotations, each specifying a set of columns that should have unique values. Example:
+
+   ```java
+   @Table(name = "students", uniqueConstraints = {
+       @UniqueConstraint(columnNames = {"name", "email"}),
+       @UniqueConstraint(columnNames = {"student_id"})
+   })
+   ```
+
+   In this example, we have specified two unique constraints. The first constraint ensures that the combination of "name" and "email" columns is unique, and the second constraint ensures that the "student_id" column has unique values.
+
+5. `indexes`: (Optional) Defines indexes on the table. It is an array of `@Index` annotations, each specifying the columns to be indexed and other attributes related to indexing. Example:
+
+   ```java
+   @Table(name = "students", indexes = {
+       @Index(columnList = "name"),
+       @Index(name = "idx_age", columnList = "age")
+   })
+   ```
+
+   In this example, we have specified two indexes. The first index indexes the "name" column, and the second index indexes the "age" column and names the index as "idx_age".
+
+6. `uniqueConstraints`: (Optional) Defines unique constraints on the table. It is an array of `@UniqueConstraint` annotations, each specifying a set of columns that should have unique values. Example:
+
+   ```java
+   @Table(name = "students", uniqueConstraints = {
+       @UniqueConstraint(columnNames = {"name", "email"}),
+       @UniqueConstraint(columnNames = {"student_id"})
+   })
+   ```
+
+   In this example, we have specified two unique constraints. The first constraint ensures that the combination of "name" and "email" columns is unique, and the second constraint ensures that the "student_id" column has unique values.
+
+7. `indexes`: (Optional) Defines indexes on the table. It is an array of `@Index` annotations, each specifying the columns to be indexed and other attributes related to indexing. Example:
+
+   ```java
+   @Table(name = "students", indexes = {
+       @Index(columnList = "name"),
+       @Index(name = "idx_age", columnList = "age")
+   })
+   ```
+
+In this example, we have specified two indexes. The first index indexes the "name" column, and the second index indexes the "age" column and names the index as "idx_age". Using the `@Table` annotation with its attributes allows you to have fine-grained control over the name and structure of the database table associated with your entity class, which can be helpful in various database and schema design scenarios.
 
 ***
 
 ### @Id ###
 
-@Id annotation is used to specify that a particular field or property in an entity class represents the primary key of the corresponding database table. The primary key uniquely identifies each row in the table.
-The field or property to which the @Id annotation is applied should be one of the following types: any Java primitive type; any primitive wrapper type; String; java.util.Date; java.sql.Date; java.math.BigDecimal; java.math.BigInteger.
+`@Id` annotation is used to specify that a particular field or property in an entity class represents the primary key of the corresponding database table. The primary key uniquely identifies each row in the table.
 
-***
+Here's how the `@Id` annotation is used:
 
-```
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -415,25 +438,45 @@ public class Employee {
     private String firstName;
     private String lastName;
     private int age;
+
+    // Constructors, getters, setters, etc.
 }
 ```
 
-### @GeneratedValue ###
+In this example, we have an `Employee` entity with fields `id`, `firstName`, `lastName`, and `age`. The `id` field is marked with the `@Id` annotation, indicating that it represents the primary key of the `employees` table in the database.
 
-@GeneratedValue annotation in JPA is used to specify how the primary key values of an entity should be automatically generated when inserting new records into the database. It is typically used in conjunction with the @Id annotation, which designates the field or property representing the primary key.
+The `@GeneratedValue` annotation is also used alongside `@Id` to specify how the value for the primary key should be generated. In this example, we use `GenerationType.IDENTITY`, which means that the database will automatically generate the primary key value when a new `Employee` entity is persisted (inserted) into the database.
 
-The @GeneratedValue annotation has several attributes to define different strategies for generating primary key values. The common attributes are:
+There are several other strategies available for generating primary key values using the `@GeneratedValue` annotation, such as `GenerationType.AUTO`, `GenerationType.SEQUENCE`, and `GenerationType.TABLE`, depending on the underlying database and the requirements of your application.
 
-1. **strategy:** Specifies the generation strategy for the primary key value. It accepts one of the values from the GenerationType enumeration. Some common strategies are:
-    * **GenerationType.AUTO:** The JPA provider selects an appropriate strategy for the underlying database. It may use **IDENTITY**, **SEQUENCE**, or **TABLE** depending on the database capabilities.
-    * **GenerationType.IDENTITY:** The primary key value is automatically generated by the database. It relies on an auto-incrementing column (e.g., auto_increment in MySQL) to generate the values.
-    * **GenerationType.SEQUENCE:** The primary key value is generated using a database sequence. The sequenceName attribute must also be specified to provide the name of the database sequence.
-    * **GenerationType.TABLE:** The primary key value is generated using a table that stores the last generated key values. The table and pkColumnName attributes must be specified to define the name of the table and primary key column in that table.
-2. **generator:** Specifies the name of the primary key generator to use. This is optional and is typically used in conjunction with the strategy attribute when using custom primary key generation strategies.
+Using the `@Id` annotation properly is essential in JPA, as it allows the JPA provider (e.g., Hibernate) to identify and manage entities based on their primary keys, enabling efficient and correct database operations and entity associations.
 
 ***
 
-```
+### @GeneratedValue ###
+
+The `@GeneratedValue` annotation in JPA is used to specify how the primary key values of an entity should be automatically generated when inserting new records into the database. It is typically used in conjunction with the `@Id` annotation, which designates the field or property representing the primary key.
+
+The `@GeneratedValue` annotation has several attributes to define different strategies for generating primary key values. The common attributes are:
+
+1. `strategy`: Specifies the generation strategy for the primary key value. It accepts one of the values from the `GenerationType` enumeration. Some common strategies are:
+   - `GenerationType.AUTO`: The JPA provider selects an appropriate strategy for the underlying database. It may use `IDENTITY`, `SEQUENCE`, or `TABLE` depending on the database capabilities.
+   - `GenerationType.IDENTITY`: The primary key value is automatically generated by the database. It relies on an auto-incrementing column (e.g., auto_increment in MySQL) to generate the values.
+   - `GenerationType.SEQUENCE`: The primary key value is generated using a database sequence. The `sequenceName` attribute must also be specified to provide the name of the database sequence.
+   - `GenerationType.TABLE`: The primary key value is generated using a table that stores the last generated key values. The `table` and `pkColumnName` attributes must be specified to define the name of the table and primary key column in that table.
+
+2. `generator`: Specifies the name of the primary key generator to use. This is optional and is typically used in conjunction with the `strategy` attribute when using custom primary key generation strategies.
+
+Here's an example of using `@GeneratedValue` with different strategies:
+
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -453,26 +496,38 @@ public class Employee {
 }
 ```
 
-In this example, we have an Employee entity with two primary keys: id and customId. For id, we use GenerationType.IDENTITY, which will rely on the database's auto-incrementing column to generate the values. For customId, we use GenerationType.SEQUENCE with a custom sequence generator named "emp_seq". The sequence generator is specified using the @SequenceGenerator annotation, which provides the name of the database sequence (employee_sequence) to be used and the allocation size (in this case, 1).
+In this example, we have an `Employee` entity with two primary keys: `id` and `customId`. For `id`, we use `GenerationType.IDENTITY`, which will rely on the database's auto-incrementing column to generate the values. For `customId`, we use `GenerationType.SEQUENCE` with a custom sequence generator named `"emp_seq"`. The sequence generator is specified using the `@SequenceGenerator` annotation, which provides the name of the database sequence (`employee_sequence`) to be used and the allocation size (in this case, 1).
 
-Note: The use of multiple @Id annotations in a single entity class represents a composite primary key, which is beyond the scope of this example. It is more common to have a single @Id annotation representing the primary key.
+Note: The use of multiple `@Id` annotations in a single entity class represents a composite primary key, which is beyond the scope of this example. It is more common to have a single `@Id` annotation representing the primary key.
 
 ***
 
 ### @Column ###
 
-@Column annotation in JPA is used to specify the mapping of a field or property to a column in the database table. It allows you to customize various attributes of the database column, such as name, length, nullable, uniqueness, etc.
+The `@Column` annotation in JPA is used to specify the mapping of a field or property to a column in the database table. It allows you to customize various attributes of the database column, such as name, length, nullable, uniqueness, etc.
 
-1. **name:** Specifies the name of the database column to which the field or property is mapped. If not provided, the default is the name of the Java field or property.
-2. **length:** Specifies the length of the column for string-based fields. For example, @Column(length = 100) will create a column with a maximum length of 100 characters.
-3. **nullable:** Defines whether the column can hold null values or not. By default, it is set to true, meaning the column can be nullable. To make the column not nullable, set it to false like @Column(nullable = false).
-4. **unique:** Specifies whether the column should enforce uniqueness. Setting unique = true means the column values must be unique across all rows.
-5. **insertable:** Determines whether the column should be included in SQL INSERT statements when persisting an entity. By default, it is set to true.
-6. **updatable:** Determines whether the column should be included in SQL UPDATE statements when updating an entity. By default, it is set to true.
+Here are some of the common properties of the `@Column` annotation:
 
-Here's an example of using the @Column annotation with some properties:
+1. `name`: Specifies the name of the database column to which the field or property is mapped. If not provided, the default is the name of the Java field or property.
 
-```
+2. `length`: Specifies the length of the column for string-based fields. For example, `@Column(length = 100)` will create a column with a maximum length of 100 characters.
+
+3. `nullable`: Defines whether the column can hold null values or not. By default, it is set to `true`, meaning the column can be nullable. To make the column not nullable, set it to `false` like `@Column(nullable = false)`.
+
+4. `unique`: Specifies whether the column should enforce uniqueness. Setting `unique = true` means the column values must be unique across all rows.
+
+5. `insertable`: Determines whether the column should be included in SQL INSERT statements when persisting an entity. By default, it is set to `true`.
+
+6. `updatable`: Determines whether the column should be included in SQL UPDATE statements when updating an entity. By default, it is set to `true`.
+
+Here's an example of using the `@Column` annotation with some properties:
+
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -489,31 +544,40 @@ public class Employee {
 
     @Column(name = "email", unique = true)
     private String email;
+
+    // Getters, setters, constructors, etc.
 }
 ```
-In this example, we have an Employee entity with four fields: id, firstName, lastName, and email. The @Column annotation is used to customize the mapping of each field to the corresponding database column:
 
-* For the id field, we use @Column(name = "employee_id") to map it to the employee_id column in the database.
-* For firstName and lastName, we use @Column(length = 50, nullable = false) to set the maximum length of the columns to 50 characters and ensure they are not nullable.
-* For email, we use @Column(unique = true) to enforce uniqueness on the email column, meaning that each email address must be unique across all rows in the table.
-  
-> ⚠️ Keep in mind that the @Column annotation is not mandatory in all cases. If you do not use it, JPA will use default mappings for the fields. However, it provides a way to customize the column mappings to suit your specific database requirements.
+In this example, we have an `Employee` entity with four fields: `id`, `firstName`, `lastName`, and `email`. The `@Column` annotation is used to customize the mapping of each field to the corresponding database column:
+
+- For the `id` field, we use `@Column(name = "employee_id")` to map it to the `employee_id` column in the database.
+- For `firstName` and `lastName`, we use `@Column(length = 50, nullable = false)` to set the maximum length of the columns to 50 characters and ensure they are not nullable.
+- For `email`, we use `@Column(unique = true)` to enforce uniqueness on the `email` column, meaning that each email address must be unique across all rows in the table.
+
+> ⚠️ Keep in mind that the `@Column` annotation is not mandatory in all cases. If you do not use it, JPA will use default mappings for the fields. However, it provides a way to customize the column mappings to suit your specific database requirements.
 
 ***
      
 ### @Enumerated ###
 
-@Enumerated annotation in JPA is used to specify the mapping of an enum type field to the database. It is applied to a field of an enum type to define how the enum's values are stored and retrieved in the database table.
+The `@Enumerated` annotation in JPA is used to specify the mapping of an enum type field to the database. It is applied to a field of an enum type to define how the enum's values are stored and retrieved in the database table.
 
-Here are the attributes of the @Enumerated annotation:
+Here are the attributes of the `@Enumerated` annotation:
 
-1. **value (default):** Specifies the strategy to use for persisting the enum value in the database. The value attribute can take one of two values:
-      * EnumType.ORDINAL: This is the default value. It stores the enum as an integer value representing the index of the enum constant in the enum declaration. (0-based index)
-      * EnumType.STRING: It stores the enum as a string representing the name of the enum constant.
-        
-Here's an example of using the @Enumerated annotation:
+1. `value` (default): Specifies the strategy to use for persisting the enum value in the database. The `value` attribute can take one of two values:
+   - `EnumType.ORDINAL`: This is the default value. It stores the enum as an integer value representing the index of the enum constant in the enum declaration. (0-based index)
+   - `EnumType.STRING`: It stores the enum as a string representing the name of the enum constant.
 
-```
+Here's an example of using the `@Enumerated` annotation:
+
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+
 public enum Gender {
     MALE,
     FEMALE
@@ -535,31 +599,142 @@ public class Employee {
     @Column(name = "employee_status")
     private EmployeeStatus status;
 
+    // Getters, setters, constructors, etc.
 }
-
 ```
 
-In this example, we have an Employee entity with two enum fields: gender and status. The gender field uses the default @Enumerated annotation without specifying any attributes, so it will be persisted as an ordinal value (integer). The status field, on the other hand, uses the @Enumerated(EnumType.STRING) annotation, specifying that it should be persisted as a string (the name of the enum constant).
+In this example, we have an `Employee` entity with two enum fields: `gender` and `status`. The `gender` field uses the default `@Enumerated` annotation without specifying any attributes, so it will be persisted as an ordinal value (integer). The `status` field, on the other hand, uses the `@Enumerated(EnumType.STRING)` annotation, specifying that it should be persisted as a string (the name of the enum constant).
 
-For instance, if you create an Employee object with the following values:
+For instance, if you create an `Employee` object with the following values:
 
-```
+```java
 Employee employee = new Employee();
 employee.setId(1L);
 employee.setName("John Doe");
 employee.setGender(Gender.MALE);
 employee.setStatus(EmployeeStatus.ACTIVE);
-
 ```
 
 In the database, it would be stored like this:
 
-```
 | id | name      | gender | employee_status |
 |----|-----------|--------|-----------------|
 | 1  | John Doe  | 0      | ACTIVE          |
+
+`Gender.MALE` is stored as an ordinal value `0`, whereas `EmployeeStatus.ACTIVE` is stored as a string `"ACTIVE"` in the `employee_status` column due to the `@Enumerated(EnumType.STRING)` annotation.
+
+***
+
+### @JoinColumn ###
+
+The `@JoinColumn` annotation in JPA is used to specify the mapping of a foreign key column in a database table that is associated with a relationship between two entities. It is applied on the owner side of the relationship to define the column that will hold the foreign key referencing the related entity.
+
+Here are some of the common attributes of the `@JoinColumn` annotation:
+
+1. `name`: Specifies the name of the foreign key column in the owner entity's table. If not provided, the default is the name of the referenced entity's primary key column.
+
+2. `referencedColumnName`: Specifies the name of the referenced entity's primary key column. If not provided, the default is the primary key column name of the referenced entity.
+
+3. `nullable`: Defines whether the foreign key column can hold null values or not. By default, it is set to `true`, meaning the foreign key column can be nullable. To make the column not nullable, set it to `false` like `@JoinColumn(nullable = false)`.
+
+4. `unique`: Specifies whether the foreign key column should enforce uniqueness. Setting `unique = true` means the column values must be unique across all rows.
+
+5. `insertable`: Determines whether the foreign key column should be included in SQL INSERT statements when persisting an entity. By default, it is set to `true`.
+
+6. `updatable`: Determines whether the foreign key column should be included in SQL UPDATE statements when updating an entity. By default, it is set to `true`.
+
+7. `columnDefinition`: Allows you to provide the SQL DDL column definition for the foreign key column. It can be used to specify additional constraints, types, or other properties.
+
+Here's an example of using the `@JoinColumn` annotation:
+
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    private Long id;
+
+    private String orderNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false)
+    private Customer customer;
+
+    // Other fields, getters, setters, constructors, etc.
+}
 ```
 
-Gender.MALE is stored as an ordinal value 0, whereas EmployeeStatus.ACTIVE is stored as a string "ACTIVE" in the employee_status column due to the @Enumerated(EnumType.STRING) annotation.
+In this example, we have an `Order` entity that is associated with the `Customer` entity through a many-to-one relationship. The `@JoinColumn` annotation is used on the `customer` field to specify the mapping of the foreign key column `customer_id` in the `orders` table, which references the `id` column of the `customers` table (referencedColumnName = "id"). The foreign key column is made not nullable (nullable = false) to enforce that each order must have a valid customer associated with it.
+
+The `@ManyToOne` annotation indicates the direction of the relationship, where many orders can be associated with one customer. In this case, the `Order` entity is the owner side of the relationship, and the `Customer` entity would have the inverse side (possibly using the `@OneToMany` or `@OneToOne` annotations).
+
+***
+
+### @Inheritance ###
+
+In JPA, the `@Inheritance` annotation is used to specify the inheritance strategy for a class hierarchy. It is applied to the root class of the inheritance hierarchy to define how the entities in the hierarchy should be mapped to the database.
+
+Here are the attributes of the `@Inheritance` annotation:
+
+1. `strategy`: Specifies the inheritance strategy to use. The `strategy` attribute can take one of the following values:
+   - `InheritanceType.SINGLE_TABLE`: This is the default value. It maps all entities in the hierarchy to a single table. It uses a discriminator column to determine the actual subclass of each row.
+   - `InheritanceType.JOINED`: This strategy maps each subclass to a separate table. It creates a join between the root table and each subclass table based on the primary key and foreign key relationship.
+   - `InheritanceType.TABLE_PER_CLASS`: This strategy maps each subclass to its own table. It creates a separate table for each subclass and duplicates the common fields in each table.
+
+Here's an example of using the `@Inheritance` annotation:
+
+```java
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "vehicles")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "vehicle_type", discriminatorType = DiscriminatorType.STRING)
+public class Vehicle {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String brand;
+
+    // Other fields, getters, setters, constructors, etc.
+}
+
+@Entity
+@DiscriminatorValue("CAR")
+public class Car extends Vehicle {
+
+    private int numberOfDoors;
+
+    // Car-specific fields, getters, setters, constructors, etc.
+}
+
+@Entity
+@DiscriminatorValue("MOTORCYCLE")
+public class Motorcycle extends Vehicle {
+
+    private boolean hasSideCar;
+
+    // Motorcycle-specific fields, getters, setters, constructors, etc.
+}
+```
+
+In this example, we have a class hierarchy of `Vehicle`, with two subclasses `Car` and `Motorcycle`. The `@Inheritance` annotation is used on the `Vehicle` class to specify the inheritance strategy as `InheritanceType.SINGLE_TABLE`, meaning all entities in the hierarchy will be mapped to a single table (`vehicles`). The discriminator column `vehicle_type` is used to differentiate between the subclasses.
+
+The `@DiscriminatorColumn` annotation is used to define the discriminator column in the `vehicles` table, which holds the discriminator value (`CAR` for `Car` class and `MOTORCYCLE` for `Motorcycle` class).
+
+The `@DiscriminatorValue` annotation is used on each subclass to specify the discriminator value associated with that subclass (`CAR` for `Car` class and `MOTORCYCLE` for `Motorcycle` class). This value will be stored in the `vehicle_type` column of the `vehicles` table to indicate the actual subclass for each row.
+
+Depending on your application requirements, you can choose a different inheritance strategy based on the complexity and performance considerations of your data model.
+
+
 
 ***
