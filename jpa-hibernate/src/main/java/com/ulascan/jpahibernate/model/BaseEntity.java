@@ -42,17 +42,14 @@ public class BaseEntity {
     )
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "degree_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "degree_id_fk"
-            )
+            name = "degree_id"
     )
     private Degree degree;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(
             name = "department_id",
             referencedColumnName = "id",

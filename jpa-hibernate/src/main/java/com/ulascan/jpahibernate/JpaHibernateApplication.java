@@ -22,94 +22,10 @@ public class JpaHibernateApplication {
 
 
 	@Bean
-	CommandLineRunner commandLineRunner(
-			StudentRepository studentRepository,
-			CourseRepository courseRepository,
-			StudentCourseMapperRepository studentCourseMapperRepository
-	)
+	CommandLineRunner commandLineRunner()
 	{
 		return args -> {
-			Faker faker = new Faker();
-
-			String firstName = faker.name().firstName();
-			String lastName = faker.name().lastName();
-			String email = String.format("%s.%s@gmail.com", firstName, lastName);
-
-			System.out.println(email);
-
-			Faculty faculty = Faculty.builder()
-					.name("Electric Electronic Faculty")
-					.build();
-
-			Department department = Department.builder()
-					.name("Computer Engineering")
-					.faculty(faculty)
-					.build();
-
-			Course course = Course.builder()
-					.hours(15)
-					.capacity(100)
-					.department(department)
-					.name("Database Systems 101")
-					.code("BLM4900")
-					.material(ImageMaterial.builder()
-							.url("youtube.com")
-							.name("Youtube Video")
-							.type(ImageType.PNG)
-							.build())
-					.build();
-
-			Set<Course> courseSet = new HashSet<>();
-			courseSet.add(course);
-
-			Instructor instructor = Instructor.builder()
-					.firstname(faker.name().firstName())
-					.lastname(faker.name().lastName())
-					.department(department)
-					.email("instructor@edu.com")
-					.courses(courseSet)
-					.degree(Degree.builder()
-							.degreeType(DegreeType.MASTER)
-							.build())
-					.build();
-
-			//course.setInstructor(instructor);
-
-			Student student = Student.builder()
-					.firstname(firstName)
-					.lastname(lastName)
-					.email(email)
-					.degree(Degree.builder()
-							.degreeType(DegreeType.BACHELORS)
-							.build())
-					.department(department)
-					.grade(4)
-					.build();
-
-			List<StudentCourseMapper> courseMapperList = new ArrayList<>();
-			courseMapperList.add(StudentCourseMapper
-					.builder()
-					.id(new StudentCourseId(1,1))
-					.midterm(59)
-					.finalGrade(35)
-					.course(course)
-					.student(student)
-					.build());
-
-			student.setCourses(courseMapperList);
-			course.setInstructor(instructor);
-			department.setCourses(courseSet);
-
-			studentRepository.save(student);
-
-			Student student1 = studentRepository.findAll().get(0);
-
-			Course course1 = courseRepository.findAll().get(0);
-
-			StudentCourseMapper mapper = studentCourseMapperRepository.findAll().get(0);
-
-			System.out.printf(student1.getCourses().get(0).getCourse().getName());
-
+			//Faker faker = new Faker();
 
 		};
 	}

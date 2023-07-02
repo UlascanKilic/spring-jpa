@@ -30,7 +30,7 @@ public class Department {
     )
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "faculty_id",
             referencedColumnName = "id",
