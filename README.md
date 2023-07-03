@@ -43,7 +43,15 @@ This is a personal documentation and library for me. Since I often use JPA and H
   - [@EmbeddedId](https://github.com/UlascanKilic/spring-jpa#embeddedid)
  + [Relationships]()
     - [OneToOne Relation]()
-    - [OneToMany Relation]()
+    - [OneToMany Relation](https://github.com/UlascanKilic/spring-jpa#one-to-many-relationship)
+       * [Keypoints](https://github.com/UlascanKilic/spring-jpa#keypoints)
+       * [Always Cascade from **parent-side** to **child-side**](https://github.com/UlascanKilic/spring-jpa#always-cascade-from-parent-side-to-child-side)
+       * [Dont forget to set mappedBy on the parent-side](https://github.com/UlascanKilic/spring-jpa#dont-forget-to-set-mappedby-on-the-parent-side)
+       * [Set orphanRemoval on the parent-side](https://github.com/UlascanKilic/spring-jpa#set-orphanremoval-on-the-parent-side)
+       * [Keep both sides of the association in sync](https://github.com/UlascanKilic/spring-jpa#keep-both-sides-of-the-association-in-sync)
+       * [Use lazy fetching on both sides of the association](https://github.com/UlascanKilic/spring-jpa#use-lazy-fetching-on-both-sides-of-the-association)
+       * [Use @JoinColumn to specify the join column name](https://github.com/UlascanKilic/spring-jpa#use-joincolumn-to-specify-the-join-column-name)
+       * [Fetching](https://github.com/UlascanKilic/spring-jpa#fetching)
     - [ManyToMany Relation With Join Table]()
     - [ManyToMany Relation With Composite Key]()
     - [Inheritance With Entities]()
@@ -858,3 +866,274 @@ With the `@EmbeddedId` annotation, JPA will automatically handle the mapping of 
 Using a composite key with `@EmbeddedId` is useful when your entity's uniqueness depends on multiple attributes, and you want to express that uniqueness as a single primary key. It can be particularly handy for mapping legacy databases or dealing with complex domain models that require composite keys.
 
 ***
+
+### Relationships ###
+
+#### One To Many Relationship ###
+
+In JPA, the `@OneToMany` annotation is used to establish a one-to-many relationship between two entities. It allows you to define a relationship where one entity (the "one" side) is associated with multiple instances of another entity (the "many" side). 
+
+About the `@OneToMany` annotation:
+
+1. Cardinality: The annotation is used to indicate that one instance of the source entity can be associated with multiple instances of the target entity.
+
+2. Mapping Direction: The `@OneToMany` annotation can be used to create both unidirectional and bidirectional associations between entities.
+
+3. Unidirectional Mapping: In a unidirectional `@OneToMany` association, the source entity references the target entity, but the target entity does not have a reference back to the source entity.
+
+4. Bidirectional Mapping: In a bidirectional `@OneToMany` association, both the source and target entities have references to each other, allowing navigation in both directions.
+
+5. Use of `mappedBy`: In a bidirectional association, you need to specify the `mappedBy` attribute to indicate the field in the target entity that maps back to the source entity.
+
+6. Cascading: You can use cascading options, such as `CascadeType.ALL`, to propagate operations (e.g., persist, update, delete) from the source entity to the associated target entities.
+
+7. JoinColumn: In a unidirectional `@OneToMany` association, you can use `@JoinColumn` to specify the foreign key column in the target entity's table.
+
+8. Orphan Removal: By default, when an entity is removed from the source entity's collection in a bidirectional `@OneToMany` association, it is not automatically deleted from the database. You can enable orphan removal to automatically delete associated entities that are no longer referenced.
+
+Overall, the `@OneToMany` annotation is a powerful tool in JPA for establishing one-to-many relationships between entities, allowing you to build rich and complex data models that accurately represent the underlying business logic and data relationships.
+
+#### Keypoints ####
+##### Always Cascade from **parent-side** to **child-side** #####
+
+```java
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Department {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+    private String facultyName;
+    private int yearOfFoundation;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+            mappedBy = "department")
+    private List<Course> courses = new ArrayList<>();
+}
+
+```
+
+
+```java
+public class Course {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+    private String description;
+
+    private int capacity;
+    private int credit;
+
+
+    // parent department
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "instructor_id")
+    private Instructor instructor;
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null){
+            return false;
+        }
+        if(this == obj){
+            return true;
+        }
+        if(getClass() != obj.getClass()){
+            return false;
+        }
+
+        return id != null && id.equals(((Course) obj).id);
+    }
+
+    @Override
+    public int hashCode(){
+        return 2023;
+    }
+}
+
+```
+
+***
+
+##### Dont forget to set mappedBy on the parent-side #####
+
+The mappedBy attibute is a mandatory attribute for bidirectional mapping. The parent object is specified in the @OneToMany annotation and references the name of the child object marked with the @ManyToOne annotation.
+
+```java
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+            mappedBy = "department")
+    private List<Course> courses = new ArrayList<>();
+```
+
+***
+
+##### Set orphanRemoval on the parent-side #####
+
+Setting orphanRemoval to true on the parent side ensures that child objects without references will be removed. According to Case, this attibure must be true or false. For example; A course has to belong to a department, but not necessarily to a teacher. The course is newly opened and may not be taught by any teacher. In this case, orphanRemoval = true in the Parent-Child relationship between Department-Course, but orphanRemoval = false in the Parent-Child relationship between Teacher-Course. If a department is deleted from the system, the courses attached to it must be deleted because a course cannot exist without its department. If a teacher is deleted from the system, the teacher value of the courses linked to that teacher should be marked as null. Courses do not need to be deleted from the system because they can be taken by another teacher.
+```java
+    public class Department {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+    private String facultyName;
+    private int yearOfFoundation;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+            mappedBy = "department")
+    private List<Course> courses = new ArrayList<>();
+}
+
+```
+
+```java
+   public class Instructor {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+    private String degree;
+    private String gradSchool;
+    private int age;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false, // ! orphanRemoval = false 'cause we don't want to remove course from db
+    mappedBy = "instructor")
+    private List<Course> courses = new ArrayList<>();
+}
+```
+
+Here is an example of methods marked with the @Transactional annotation in the service layer:
+
+In this example, when a Course object belongs to the Department is removed from the system, it is deleted from the database, because it is marked as `orphanRemoval = true` in the class of the Department object that is Parent in the Department Course relationship.
+```java
+@Transactional
+    public void deleteCourseFromDepartment(){
+        Department department = departmentRepository.fetchDepartmentById(1L);
+        Course course = department.getCourses().get(0);
+
+        department.removeCourse(course);
+    }
+```
+
+In the example below, when the Course belongs to an Instructor is removed, the Course record is not deleted from the database and is marked as `instructor_id = null`
+
+```java
+    @Transactional
+    public void removeCourseFromInstructor()
+    {
+        Instructor instructor = instructorRepository.fetchInstructorById(1L);
+        Course course = instructor.getCourses().get(0);
+
+        instructor.removeCourse(course);
+
+    }
+```
+***
+
+##### Keep both sides of the association in sync #####
+
+> ⚠️ Always use helper methods. In this way, you can easily keep objects in sync in the service layer.
+
+```java
+public void addCourse(Course course){
+        this.courses.add(course);
+        course.setDepartment(this);
+    }
+
+    public void removeCourse(Course course){
+        course.setDepartment(null);
+        course.setInstructor(null);
+        this.courses.remove(course);
+    }
+
+    public void removeAllCourses(){
+        Iterator<Course> iterator = this.courses.iterator();
+        while(iterator.hasNext()){
+            Course course = iterator.next();
+            course.setDepartment(null);
+            course.setInstructor(null);
+            iterator.remove();
+        }
+    }
+```
+
+***
+
+##### Use lazy fetching on both sides of the association #####
+By default, fetching a parent-side entity will not fetch the children entities. This means that @OneToMany is set to lazy. On the other hand, fetching a child entity will eagerly fetch 
+its parent-side entity by default. It is advisable to explicitly set @ManyToOne to lazy and rely on eager fetching only on a query-basis.
+
+`FetchType.LAZY` and `FetchType.EAGER` are two options in JPA (Java Persistence API) that determine how the associated entities are loaded when a relationship is fetched from the database. The main differences between these fetch types are related to when and how the associated entities are retrieved:
+
+1. FetchType.LAZY:
+   - With `FetchType.LAZY`, the associated entities are not loaded from the database immediately when the parent entity is fetched. Instead, they are loaded on-demand, the first time the getter method for the association is invoked.
+   - Lazy loading is useful when you want to defer the loading of related entities until they are actually needed. This can help improve performance and reduce unnecessary database queries.
+   - However, you need to be careful when accessing lazy-loaded associations outside the context of the persistence context (e.g., after the EntityManager is closed), as it may lead to `LazyInitializationException` if the associated entities are not loaded.
+
+2. FetchType.EAGER:
+   - With `FetchType.EAGER`, the associated entities are fetched immediately along with the parent entity, at the time the parent entity is loaded from the database.
+   - Eager loading is suitable when you often need the related entities along with the parent entity, and you want to minimize the number of queries required to retrieve the data.
+   - Be cautious with eager loading, especially when dealing with deep object graphs or large associations, as it may lead to the retrieval of more data than needed, causing performance issues.
+
+In summary, the key differences are:
+
+- `FetchType.LAZY` loads associated entities on-demand (when accessed), while `FetchType.EAGER` loads associated entities immediately along with the parent entity.
+- Lazy loading is generally more efficient when related entities are not always needed, while eager loading can be beneficial when related entities are commonly accessed together with the parent entity.
+- Care should be taken with both approaches to avoid potential performance and memory issues based on the specific use case and data model.
+
+> ⚠️ DONT USE FetchType.EAGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+```java
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+```
+
+***
+
+##### Use @JoinColumn to specify the join column name #####
+```java
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+```
+
+***
+
+##### Fetching #####
+
+```java
+@Repository
+@Transactional(readOnly = true)
+public interface IDepartmentRepository extends JpaRepository<Department, Long> {
+    @Query("SELECT d FROM Department d JOIN FETCH d.courses WHERE d.id = ?1")
+    Department fetchDepartmentById(Long id);
+}
+```
