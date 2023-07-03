@@ -8,9 +8,11 @@ import com.ulascan.jpahibernate.relations.OneToManyBidirectional.UniversityDepar
 import com.ulascan.jpahibernate.relations.OneToManyBidirectional.UniversityDepartment.repository.IDepartmentRepository;
 import com.ulascan.jpahibernate.relations.OneToManyBidirectional.UniversityDepartment.repository.IInstructorRepository;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UniversityService {
@@ -75,6 +77,12 @@ public class UniversityService {
 
         System.out.println(department1.getName());
 
+        /*
+        ! Trigger Lazy init
+        */
+
+        List<Course> courses = findCoursesByDepartmentId(1L);
+
     }
 
     public void getInstructorById(Long id){
@@ -119,5 +127,23 @@ public class UniversityService {
 
         instructor.removeCourse(course);
 
+    }
+
+    public Department findDepartmentById(Long departmentId) {
+        return departmentRepository.findById(departmentId).orElse(null);
+    }
+
+
+    public List<Course> findCoursesByDepartmentId(Long departmentId){
+        Department department = departmentRepository.findById(departmentId).orElse(null);
+
+        /*Hibernate.initialize(department.getCourses());
+
+        List<Course> courses = department.getCourses();*/
+
+        if(department != null){
+            return departmentRepository.findCourses(departmentId);
+        }
+        return null;
     }
 }
